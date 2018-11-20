@@ -4,7 +4,10 @@ const request = require('request-promise');
 const csv = require('csvtojson');
 const readline = require('readline');
 const { google } = require('googleapis');
+
+
 const CronJob = require('cron').CronJob;
+
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 const TOKEN_PATH = 'token.json';
@@ -218,33 +221,55 @@ function listMajors(auth) {
 
                                 await page.waitFor(3000)
 
-                                await page.evaluate(async (params) => {
+                                await page.goto('http://premier.ticketsforfun.com.br/shows/show.aspx?sh=SANDYRJ18')
 
-                                    document.querySelectorAll('.specialEventBlurb p').forEach(function (item) {
+                                await clickAndWait(page, '#ctl00_ctl00_uiBodyMain_uiBodyRight_uiPerfSelector_uiBuyNowButton', 5000)
 
-                                        if(item.textContent.toUpperCase().indexOf(params.local_evento.toUpperCase()) == 0) {
+                                //inserir codigo que faca com que o captcha apareca mais em cima
+                                // ou usar plugin do indiano
 
-                                            item.parentElement.parentElement.querySelectorAll('.blue').forEach(function(x){
-                                                                                                
-                                                if(x.textContent.toUpperCase() === params.tipo_venda.toUpperCase()) {
 
-                                                    document.location.href =  x.parentElement.parentElement.querySelector('a');
-
-                                                }
-                                            })
-
+                                await page.evaluate(async () => {
+                                    //document.querySelector('#g-recaptcha-response').style.display = 'block';
+                                    let elemento = document.querySelector('#g-recaptcha-response');
+                                    let resp;
+                            
+                                    while (true) {
+                                        await new Promise(function (resolve) {
+                                            setTimeout(resolve, 10000);
+                                        });
+                                        resp = elemento.value;
+                                        if (resp && resp != '') {
+                                            break;
                                         }
-                                    })
+                                    }
+                                });
 
-                                    await page.waitFor(3000)
+                                // await page.evaluate(async (params) => {
 
-                                    await 
+                                //     document.querySelectorAll('.specialEventBlurb p').forEach(function (item) {
 
-                                    await page.clickAndWait(page, '#ctl00_ctl00_uiBodyMain_uiBodyRight_uiPerfSelector_uiBuyNowButton', 5000)
+                                //         if(item.textContent.toUpperCase().indexOf(params.local_evento.toUpperCase()) == 0) {
+
+                                //             item.parentElement.parentElement.querySelectorAll('.blue').forEach(function(x){
+                                                                                                
+                                //                 if(x.textContent.toUpperCase() === params.tipo_venda.toUpperCase()) {
+
+                                //                     document.location.href =  x.parentElement.parentElement.querySelector('a');
+                                //                 }
+                                //             })
+
+                                //         }
+                                //     })
+
+                                //     await page.waitFor(3000)
+
+                                //     await page.clickAndWait(page, '#ctl00_ctl00_uiBodyMain_uiBodyRight_uiPerfSelector_uiBuyNowButton', 5000)
 
 
                                   
-                                }, params)
+                                // }, params)
+
 
                                 // await page.waitFor(5000)
 
